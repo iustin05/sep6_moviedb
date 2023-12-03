@@ -7,4 +7,5 @@ debug_mode = True if port == 5000 else False
 
 if __name__ == '__main__':
     app = create_app()
+    print('test')
     app.run(debug=debug_mode, host='0.0.0.0', port=port)
