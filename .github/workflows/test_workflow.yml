@@ -1,5 +1,5 @@
 #
-name: Create and publish a Docker image to the GitHub Container Repo
+name: Create and publish a Docker image to the GitHub Container Packages
 
 on:
   push:
