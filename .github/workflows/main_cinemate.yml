@@ -30,7 +30,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: ghcr.io//${{ secrets.AzureAppService_ContainerUsername_ede99b261078489ea54b494e16b929d7 }}/iustin05/SEP6_movieDB:${{ github.sha }}
+        tags: iustin05/sep6_moviedb:latest
         file: ./Dockerfile
 
   deploy:
