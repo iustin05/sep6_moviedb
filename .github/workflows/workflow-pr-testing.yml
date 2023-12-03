@@ -38,4 +38,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: iustin05/sep6_moviedb:testing-${{ github.ref_name }}
+          tags: iustin05/sep6_moviedb:testing
