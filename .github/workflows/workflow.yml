@@ -25,4 +25,4 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         push: true
-        tags: iustin05/SEP6_movieDB:latest
+        tags: iustin05/sep6_moviedb:latest
