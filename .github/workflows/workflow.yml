@@ -1,28 +1,53 @@
-name: Flask CI/CD Pipeline
+#
+name: Create, Publish and Deploy a container to Azure
 
 on:
   push:
     branches: [ main ]
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
+jobs:
+  build-push-deploy-image:
+    runs-on: ubuntu-latest
+    name: Create & Deploy Latest
+    permissions:
+      contents: read
+      packages: write
+    environment:
+      name: 'production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python 3.8
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.8
-    - name: Install dependencies
-      run: |
-        pip install --upgrade pip
-        pip install -r requirements.txt
-    - name: Run Tests
-      run: |
-        # Add commands to run your tests here
-    - name: Build and Push Docker Image
-      uses: docker/build-push-action@v2
-      with:
-        push: true
-        tags: iustin05/sep6_moviedb:latest
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v2
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+      - name: Build and push Docker Image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'cinemate'
+          slot-name: 'production'
+          publish-profile: ${{ secrets.AzureAppService_PublishProfile_e3c6cd5f236b47e6a411036e097b25b2 }}
+          images: 'ghcr.io/iustin05/sep6_moviedb:latest'
