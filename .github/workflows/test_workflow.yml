@@ -52,4 +52,4 @@ jobs:
           app-name: 'cinemate'
           slot-name: 'production'
           publish-profile: ${{ secrets.AzureAppService_PublishProfile_e3c6cd5f236b47e6a411036e097b25b2 }}
-          images: 'ghcr.io/iustin05/SEP6_movieDB:feature-init-flask-project'
+          images: 'ghcr.io/iustin05/sep6_moviedb:feature-init-flask-project'
