@@ -14,11 +14,9 @@ jobs:
     runs-on: ubuntu-latest
     name: Test Current Merge Request Codebase for Docker-ability
     permissions:
-      contents: read
+      contents: write
       packages: write
-    environment:
-      name: 'production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -28,11 +26,7 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v2
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
       - name: Build and push Docker Image
         uses: docker/build-push-action@v2
         with:
