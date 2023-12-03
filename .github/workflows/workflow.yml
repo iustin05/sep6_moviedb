@@ -38,7 +38,8 @@ jobs:
         with:
           context: .
           push: true
-          tags: iustin05/sep6_moviedb:latest
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
