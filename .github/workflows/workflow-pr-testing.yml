@@ -1,8 +1,8 @@
 #
-name: Create, Publish and Deploy a container to Azure
+name: Docker Container Testing
 
 on:
-  push:
+  pull_request:
     branches: [ main ]
 
 env:
@@ -10,15 +10,13 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build-push-deploy-image:
+  test-build-push-image:
     runs-on: ubuntu-latest
-    name: Create & Deploy Latest
+    name: Test Current Merge Request Codebase for Docker-ability
     permissions:
-      contents: read
+      contents: write
       packages: write
-    environment:
-      name: 'production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -38,13 +36,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: iustin05/sep6_moviedb:latest
-
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: 'cinemate'
-          slot-name: 'production'
-          publish-profile: ${{ secrets.AzureAppService_PublishProfile_e3c6cd5f236b47e6a411036e097b25b2 }}
-          images: 'ghcr.io/iustin05/sep6_moviedb:latest'
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
