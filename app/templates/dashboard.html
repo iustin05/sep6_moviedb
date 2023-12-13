@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="container">
+            <h1 class="mt-5">Dashboard</h1>
+            <h2 class="mt-4">Favorite Movies</h2>
+            <ul class="list-group">
+                {% for movie in favorite_movies %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <a href='/movie/{{ movie.id }}' class="modern-link">{{ movie.title }}</a>
+                    <button class="remove-from-favorites btn btn-sm btn-outline-danger" data-movie-id="{{ movie.id }}">Remove from Favorites</button>
+                </li>
+                {% endfor %}
+            </ul>
+</div>
+
+<script>
+    $('.remove-from-favorites').click(function() {
+        var movieId = $(this).data('movie-id');
+        $.ajax({
+            url: '/remove_from_favorites/' + movieId,
+            type: 'POST'
+        });
+        // Create the alert message
+        const alertMessage = $('<div class="alert alert-success alert-dismissible fade show" role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999;">' +
+            'Movie removed from favorites!' +
+            '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+            '</div>');
+
+        // Append the alert message to the body
+            $('body').append(alertMessage);
+
+            // Fade out and remove the alert message after 3 seconds
+            setTimeout(function() {
+                alertMessage.alert('close');
+            }, 3000);
+        $(this).attr('disabled', true);
+        $(this).closest('li').fadeOut(1000, function() {
+            $(this).remove();
+        });
+    });
+</script>
+
+{% endblock %}
