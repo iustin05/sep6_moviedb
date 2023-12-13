@@ -6,8 +6,13 @@
 </head>
 <body>
     <h1>{{ movie.title }}</h1>
-    <p><strong>Director:</strong> {{ movie.director }}</p>
-    <p><strong>Stars:</strong> {{ movie.stars }}</p>
-    <p><strong>Rating:</strong> {{ movie.rating }} ({{ movie.votes }} votes)</p>
+    <p><strong>Directors:</strong> {% for director in movie.directors %}{{ director.name }}{% if not loop.last %}, {% endif %}{% endfor %}<br></p>
+    <p><strong>Stars:</strong> {% for star in movie.stars %}{{ star.name }}{% if not loop.last %}, {% endif %}{% endfor %}</p>
+    <p><strong>Rating:</strong> {% if movie.rating %}
+            Rating: {{ movie.rating[0].rating|round(1, 'floor') }} ({{ movie.rating[0].votes }} votes)
+        {% else %}
+            Rating not available.
+        {% endif %}</p>
+     <a href="{{ url_for('master.rate_movie', movie_id=movie.id) }}">Rate This Movie</a>
 </body>
 </html>
