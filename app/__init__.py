@@ -14,6 +14,7 @@ def create_app():
     app.config.from_object(os.environ.get("APP_SETTINGS", "config.DevelopmentConfig"))
 
     db.init_app(app)
+
     login_manager.init_app(app)
 
     with app.app_context():
