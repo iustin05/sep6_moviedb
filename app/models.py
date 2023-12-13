@@ -40,6 +40,11 @@ class Movies(db.Model):
     directors = db.relationship('People', secondary=movies_directors, backref=db.backref('directed', lazy='dynamic'))
     stars = db.relationship('People', secondary=movies_stars, backref=db.backref('starred', lazy='dynamic'))
 
+    def serialize(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+        }
 
 class People(db.Model):
     id = db.Column(db.Integer, primary_key=True)

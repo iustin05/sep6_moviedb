@@ -1,4 +1,5 @@
-from flask import render_template, url_for, flash, redirect, request
+from flask import render_template, url_for, flash, redirect, request, jsonify
+from sqlalchemy import or_
 from sqlalchemy.orm import joinedload
 from werkzeug.security import generate_password_hash
 
@@ -53,7 +54,8 @@ def login():
 
 @bp.route('/logout')
 def logout():
-    logout_user()
+    if current_user.is_authenticated:
+        logout_user()
     return redirect(url_for('master.home'))
 
 
@@ -66,7 +68,22 @@ def search():
     return render_template('search.html', title='Search', form=form)
 
 
+@bp.route('/search_result', methods=['GET', 'POST'])
+@login_required
+def search_result():
+    query = request.args.get('query', '')
+    movies = Movies.query.filter(
+        or_(
+            Movies.title.contains(query),
+            Movies.stars.any(name=query),
+            Movies.directors.any(name=query)
+        )
+    ).all()
+    return jsonify([movie.serialize() for movie in movies])
+
+
 @bp.route('/movies', methods=['GET', 'POST'])
+@login_required
 def display_movies():
     return render_template('movies.html', title='Movies', movies=Movies.query.options(
         joinedload(Movies.stars),

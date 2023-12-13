@@ -1,18 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Search Movies</title>
-</head>
-<body>
-    <h1>Search for a Movie</h1>
-    <form method="post">
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.title.label }}<br>
-            {{ form.title(size=32) }}
-        </p>
-        <p>{{ form.submit() }}</p>
-    </form>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}
+Search Page
+{% endblock %}
+
+        
+{% block content %}
+
+<div class="container">
+    <h1 class="mt-5">Search for a Movie</h1>
+    <div class="form-group">
+        <input id="searchField" type="text" class="form-control" placeholder="Search...">
+    </div>
+    <ul id="movieList" class="list-group">
+    </ul>
+    <div id="loading" style="display: none;">
+        <ul class="list-group">
+            <li class="list-group-item placeholder"></li>
+            <li class="list-group-item placeholder"></li>
+            <li class="list-group-item placeholder"></li>
+        </ul>
+    </div>
+</div>
+
+<script>
+$(document).ready(function(){
+  var timeout = null;
+  $("#searchField").on("keyup", function() {
+    clearTimeout(timeout);
+    var query = $(this).val();
+    if (query.length > 4) {
+      $("#loading").show();
+      timeout = setTimeout(function () {
+        $.get("/search_result", {query: query}, function(data) {
+          $("#movieList").empty();
+          data.forEach(function(movie) {
+            $("#movieList").append("<li><a href='/movie/" + movie.id + "'>" + movie.title + "</a></li>");
+          });
+          $("#loading").hide();
+        });
+      }, 1000);
+    } else {
+      $("#movieList").empty();
+      $("#loading").hide();
+    }
+  });
+});
+</script>
+{% endblock %}
