@@ -1,9 +1,10 @@
 from flask import render_template, url_for, flash, redirect, request
+from sqlalchemy.orm import joinedload
 from werkzeug.security import generate_password_hash
 
 from app.master_routes import bp
 from app.extensions import db
-from app.models import User, Movie
+from app.models import User, Movies
 from app.forms import LoginForm, RegistrationForm, SearchForm, MovieRatingForm
 from flask_login import login_user, current_user, logout_user, login_required
 
@@ -21,6 +22,9 @@ def register():
         return redirect(url_for('master.home'))
     form = RegistrationForm()
     if form.validate_on_submit():
+        if User.query.filter_by(email=form.email.data).first():
+            flash('Email already exists!', 'danger')
+            return render_template('register.html', title='Register', form=form)
         hashed_password = generate_password_hash(form.password.data)
         user = User(email=form.email.data, password=hashed_password)
         db.session.add(user)
@@ -62,8 +66,17 @@ def search():
     return render_template('search.html', title='Search', form=form)
 
 
+@bp.route('/movies', methods=['GET', 'POST'])
+def display_movies():
+    return render_template('movies.html', title='Movies', movies=Movies.query.options(
+        joinedload(Movies.stars),
+        joinedload(Movies.directors),
+        joinedload(Movies.rating)
+    ).limit(30).all())
+
+
 @bp.route('/movie/<int:movie_id>')
 @login_required
 def movie_detail(movie_id):
-    movie = Movie.query.get_or_404(movie_id)
+    movie = Movies.query.get_or_404(movie_id)
     return render_template('movie_detail.html', title=movie.title, movie=movie)
