@@ -43,8 +43,8 @@ class Movies(db.Model):
 
 class People(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(200), nullable=False)
-    birth = db.Column(db.Date(), nullable=True)
+    name = db.Column(db.String(50), nullable=False)
+    birth = db.Column(db.String(10), nullable=True)
 
 
 class Ratings(db.Model):

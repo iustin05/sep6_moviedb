@@ -22,6 +22,9 @@ def register():
         return redirect(url_for('master.home'))
     form = RegistrationForm()
     if form.validate_on_submit():
+        if User.query.filter_by(email=form.email.data).first():
+            flash('Email already exists!', 'danger')
+            return render_template('register.html', title='Register', form=form)
         hashed_password = generate_password_hash(form.password.data)
         user = User(email=form.email.data, password=hashed_password)
         db.session.add(user)

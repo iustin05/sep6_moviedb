@@ -10,8 +10,8 @@
         {% for movie in movies %}
     <li>
         <strong>{{ movie.title }}</strong><br>
-        Directors: {{ movie.directors }}<br>
-        Stars: {% for star in movie.stars %}{{ star.name }}{% endfor %}<br>
+        Directors: {% for director in movie.directors %}{{ director.name }}{% if not loop.last %}, {% endif %}{% endfor %}<br>
+        Stars: {% for star in movie.stars %}{{ star.name }}{% if not loop.last %}, {% endif %}{% endfor %}<br>
         {% if movie.rating %}
             Rating: {{ movie.rating[0].rating }} ({{ movie.rating[0].votes }} votes)
         {% else %}
