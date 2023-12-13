@@ -13,6 +13,7 @@ Movies Database
         {% for movie in movies %}
         <li class="mb-3">
             <strong>{{ movie.title }}</strong><br>
+            <img src="{{ movie.poster_url }}" alt="{{ movie.title }} Poster">
             Directors: 
             {% for director in movie.directors %}
                 <span>{{ director.name }}</span>{% if not loop.last %}, {% endif %}
@@ -29,7 +30,7 @@ Movies Database
             {% else %}
                 Rating not available.
             {% endif %}
-            <a href="{{ url_for('master.movie_detail', movie_id=movie.id) }}" class="btn btn-primary btn-sm mt-2">See details</a>
+            <a href="{{ url_for('master.movie_detail', movie_id=movie.id) }}" class="modern-link">See details</a>
         </li>
         {% else %}
         <li>No movies found.</li>

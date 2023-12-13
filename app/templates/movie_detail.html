@@ -16,7 +16,19 @@ Movie Detail
             {% else %}
                 Rating not available.
             {% endif %}</p>
-         <a href="{{ url_for('master.rate_movie', movie_id=movie.id) }}" class="btn btn-primary">Rate This Movie</a>
+        <a href="{{ url_for('master.rate_movie', movie_id=movie.id) }}" class="modern-link">Rate This Movie</a>
+        {% if not current_user.is_favorite(movie) %}
+            <a id="add-to-favorites" class="modern-link" data-movie-id="{{ movie.id }}">Add to Favorites</a>
+        {% endif %}
     </div>
+    <script>
+        $('#add-to-favorites').click(function() {
+            $.post("{{ url_for('master.add_to_favorites', movie_id=movie.id) }}");
+            $(this).attr('disabled', true);
+            $(this).fadeOut(1000, function() {
+                $(this).remove();
+            });
+        });
+        </script>
 
 {% endblock %}
