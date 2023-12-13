@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rate Movie</title>
+</head>
+<body>
+    <h1>Rate {{ movie.title }}</h1>
+    <form method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.rating.label }}<br>
+            {{ form.rating(size=32) }}<br>
+            {{ form.votes.label }}
+            {{ form.rating.votes }}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+    <a href="{{ url_for('master.movie_detail', movie_id=movie.id) }}">Back to movie details</a>
+</body>
+</html>

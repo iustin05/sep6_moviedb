@@ -78,5 +78,30 @@ def display_movies():
 @bp.route('/movie/<int:movie_id>')
 @login_required
 def movie_detail(movie_id):
-    movie = Movies.query.get_or_404(movie_id)
+    movie = Movies.query.options(
+        joinedload(Movies.stars),
+        joinedload(Movies.directors),
+        joinedload(Movies.rating)
+    ).get_or_404(movie_id)
     return render_template('movie_detail.html', title=movie.title, movie=movie)
+
+
+@bp.route('/movie/<int:movie_id>/rate', methods=['GET', 'POST'])
+@login_required
+def rate_movie(movie_id):
+    movie = Movies.query.options(
+        joinedload(Movies.stars),
+        joinedload(Movies.directors),
+        joinedload(Movies.rating)
+    ).get_or_404(movie_id)
+    form = MovieRatingForm()
+    if form.validate_on_submit():
+        movie.rating[0].rating = (movie.rating[0].rating * movie.rating[0].votes + form.rating.data) / (movie.rating[0].votes + 1)
+        movie.rating[0].votes += 1
+        db.session.commit()
+        flash('Your rating has been updated!', 'success')
+        return redirect(url_for('master.movie_detail', movie_id=movie.id))
+    elif request.method == 'GET':
+        form.rating.data = 0  # movie.rating[0].rating
+        form.rating.votes = movie.rating[0].votes
+    return render_template('rate_movie.html', title='Rate Movie', form=form, movie=movie)

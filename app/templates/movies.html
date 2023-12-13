@@ -13,10 +13,11 @@
         Directors: {% for director in movie.directors %}{{ director.name }}{% if not loop.last %}, {% endif %}{% endfor %}<br>
         Stars: {% for star in movie.stars %}{{ star.name }}{% if not loop.last %}, {% endif %}{% endfor %}<br>
         {% if movie.rating %}
-            Rating: {{ movie.rating[0].rating }} ({{ movie.rating[0].votes }} votes)
+            Rating: {{ movie.rating[0].rating|round(1, 'floor') }} ({{ movie.rating[0].votes }} votes)
         {% else %}
             Rating not available.
         {% endif %}
+        <a href="{{ url_for('master.movie_detail', movie_id=movie.id) }}">See details</a>
     </li>
 {% else %}
     <li>No movies found.</li>
