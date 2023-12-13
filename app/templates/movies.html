@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>All Movies</title>
+</head>
+<body>
+    <h1>All Movies</h1>
+    <ul>
+        {% for movie in movies %}
+    <li>
+        <strong>{{ movie.title }}</strong><br>
+        Directors: {{ movie.directors }}<br>
+        Stars: {% for star in movie.stars %}{{ star.name }}{% endfor %}<br>
+        {% if movie.rating %}
+            Rating: {{ movie.rating[0].rating }} ({{ movie.rating[0].votes }} votes)
+        {% else %}
+            Rating not available.
+        {% endif %}
+    </li>
+{% else %}
+    <li>No movies found.</li>
+{% endfor %}
+    </ul>
+</body>
+</html>
