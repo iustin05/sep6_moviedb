@@ -11,22 +11,15 @@ Movies Database
     <div class="row">
         {% for movie in movies %}
         <div class="col-md-4 mb-4">
-            <div class="card">
+            <div class="card h-100 shadow-sm">
                 <div id="img-wrapper">
-                    <img data-src="{{ movie.poster_url }}" src="/static/placeholder.png" class="card-img-top movie-poster lazy" alt="{{ movie.title }} Poster" onerror="this.parentNode.innerHTML='<div class=\'placeholder-img-movies\'><i class=\'fas fa-film\'></i></div>';">
+                <img data-src="{{ movie.poster_url }}" src="/static/placeholder.png" class="card-img-top movie-poster img-fluid lazy rounded" alt="{{ movie.title }} Poster" onerror="this.parentNode.innerHTML='<div class=\'placeholder-img-movies\'><i class=\'fas fa-film\'></i></div>';">
                 </div>
-                <div class="card-body">
+                    <div class="card-body">
                     <h5 class="card-title">{{ movie.title }}</h5>
-                    <p class="card-text">
-                        Directors: {{ movie.directors }}
-                        <br>
-                        Stars: {{ movie.stars }}
-                        <br>
+                    <p class="card-text">Directors: {{ movie.directors }}<br>Stars: {{ movie.stars }}<br>
                         {% if movie.rating %}
-                            Rating: 
-                            <span>
-                                {{ movie.rating|round(1, 'floor') }} ({{ movie.votes }} votes)
-                            </span>
+                            Rating: <span>{{ movie.rating|round(1, 'floor') }} ({{ movie.votes }} votes)</span>
                         {% else %}
                             Rating not available.
                         {% endif %}
@@ -61,3 +54,35 @@ Movies Database
     </div>
 </div>
 {% endblock %}
+
+
+{% block scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+            const lazyImages = [].slice.call(document.querySelectorAll("img.lazy"));
+
+            if ("IntersectionObserver" in window) {
+            let lazyImageObserver = new IntersectionObserver(function(entries, observer) {
+              entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                  let lazyImage = entry.target;
+                  lazyImage.src = lazyImage.dataset.src;
+                  lazyImage.classList.remove("lazy");
+                  lazyImageObserver.unobserve(lazyImage);
+                }
+              });
+            });
+      
+            lazyImages.forEach(function(lazyImage) {
+              lazyImageObserver.observe(lazyImage);
+            });
+          } else {
+            // Fallback for browsers that don't support Intersection Observer
+            lazyImages.forEach(function(lazyImage) {
+              lazyImage.src = lazyImage.dataset.src;
+            });
+          }
+        });
+</script>
+{% endblock %}
+```

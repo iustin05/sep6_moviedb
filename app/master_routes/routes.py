@@ -32,7 +32,6 @@ def register():
         user = User(email=form.email.data, password=hashed_password)
         db.session.add(user)
         db.session.commit()
-        flash('Account created for {}!'.format(form.email.data), 'success')
         return redirect(url_for('master.login'))
     return render_template('register.html', title='Register', form=form)
 
@@ -46,11 +45,10 @@ def login():
         user = User.query.filter_by(email=form.email.data).first()
         if user and user.check_password(form.password.data):
             login_user(user)
-            flash('You have been logged in!', 'success')
             return redirect(url_for('master.home'))
         else:
-            flash('Login Unsuccessful. Please check email and password', 'danger')
-        return redirect(url_for('master.home'))
+            flash('Email and password combination do not match', 'danger')
+            return render_template('login.html', title='Login', form=form)
     return render_template('login.html', title='Login', form=form)
 
 
@@ -117,7 +115,6 @@ def rate_movie(movie_id):
                 movie.votes + 1)
         movie.votes += 1
         db.session.commit()
-        flash('Your rating has been updated!', 'success')
         return redirect(url_for('master.movie_detail', movie_id=movie.id))
     elif request.method == 'GET':
         form.rating.data = 0  # movie.rating[0].rating

@@ -6,6 +6,7 @@ Search Page
 
         
 {% block content %}
+<link rel="stylesheet" href="https://unpkg.com/placeholder-loading/dist/css/placeholder-loading.min.css">
 
 <div class="container mt-5">
     <h1 class="text-center">Search for a Movie</h1>
@@ -35,14 +36,16 @@ Search Page
     </div>
 </div>
 </div>
+{% endblock %}
 
+{% block scripts %}
 <script>
 $(document).ready(function(){
-  var timeout = null;
-  $("#searchField").on("keyup", function() {
+    let timeout = null;
+    $("#searchField").on("keyup", function() {
     clearTimeout(timeout);
-    var query = $(this).val();
-    if (query.length > 4) {
+        const query = $(this).val();
+        if (query.length > 4) {
       $("#placeholders").show();
       $("#placeholders-no-result").hide();
       timeout = setTimeout(function () {
