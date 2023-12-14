@@ -17,23 +17,23 @@
             </ul>
 </div>
 
+{% endblock %}
+
+{% block scripts %}
 <script>
     $('.remove-from-favorites').click(function() {
-        var movieId = $(this).data('movie-id');
+        const movieId = $(this).data('movie-id');
         $.ajax({
             url: '/remove_from_favorites/' + movieId,
             type: 'POST'
         });
-        // Create the alert message
         const alertMessage = $('<div class="alert alert-success alert-dismissible fade show" role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999;">' +
             'Movie removed from favorites!' +
             '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
             '</div>');
 
-        // Append the alert message to the body
             $('body').append(alertMessage);
 
-            // Fade out and remove the alert message after 3 seconds
             setTimeout(function() {
                 alertMessage.alert('close');
             }, 3000);

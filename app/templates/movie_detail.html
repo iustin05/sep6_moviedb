@@ -7,28 +7,51 @@ Movie Detail
 
 {% block content %}
     
-    <div class="container">
-        <h1 class="mt-4">{{ movie.title }}</h1>
-        <p><strong>Directors:</strong> {% for director in movie.directors %}{{ director.name }}{% if not loop.last %}, {% endif %}{% endfor %}<br></p>
-        <p><strong>Stars:</strong> {% for star in movie.stars %}{{ star.name }}{% if not loop.last %}, {% endif %}{% endfor %}</p>
-        <p><strong>Rating:</strong> {% if movie.rating %}
-                Rating: {{ movie.rating[0].rating|round(1, 'floor') }} ({{ movie.rating[0].votes }} votes)
-            {% else %}
-                Rating not available.
-            {% endif %}</p>
-        <a href="{{ url_for('master.rate_movie', movie_id=movie.id) }}" class="modern-link">Rate This Movie</a>
-        {% if not current_user.is_favorite(movie) %}
-            <a id="add-to-favorites" class="modern-link" data-movie-id="{{ movie.id }}">Add to Favorites</a>
-        {% endif %}
+    <div class="container my-5">
+    <div class="row">
+        <div class="col-lg-4">
+            <div id="img-wrapper">
+            <img data-src="{{ movie.poster_url }}" src="/static/placeholder.png" class="img-fluid rounded movie-poster-single lazy" alt="{{ movie.title }} Poster" onerror="this.parentNode.innerHTML='<div class=\'placeholder-img-movies\'><i class=\'fas fa-film\'></i></div>';">
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <h1 class="display-4">{{ movie.title }}</h1>
+            <p class="lead"><strong>Directors:</strong> {{ movie.directors }}<br></p>
+            <p class="lead"><strong>Stars:</strong> {{ movie.stars }}</p>
+            <p class="lead"><strong>Rating:</strong>
+                {% if movie.rating %}
+                    Rating: {{ movie.rating|round(1, 'floor') }} ({{ movie.votes }} votes)
+                {% else %}
+                    Rating not available.
+                {% endif %}
+            </p>
+            <a href="{{ url_for('master.rate_movie', movie_id=movie.id) }}" class="btn btn-primary">Rate This Movie</a>
+            {% if not current_user.is_favorite(movie) %}
+                <button id="add-to-favorites" class="btn btn-warning" data-movie-id="{{ movie.id }}">Add to Favorites</button>
+            {% endif %}
+        </div>
     </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
     <script>
         $('#add-to-favorites').click(function() {
             $.post("{{ url_for('master.add_to_favorites', movie_id=movie.id) }}");
+            const alertMessage = $('<div class="alert alert-success alert-dismissible fade show" role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999;">' +
+            'Movie added to your favorites!' +
+            '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+            '</div>');
+
+            $('body').append(alertMessage);
+
+            setTimeout(function() {
+                alertMessage.alert('close');
+            }, 3000);
             $(this).attr('disabled', true);
             $(this).fadeOut(1000, function() {
                 $(this).remove();
             });
         });
         </script>
-
 {% endblock %}
