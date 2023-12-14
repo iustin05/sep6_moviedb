@@ -6,36 +6,58 @@ Movies Database
 
 
 {% block content %}
-
 <div class="container mt-4">
-    <h1>Explore Movies</h1>
-    <ul class="list-unstyled">
+    <h1 class="mb-4">Explore Movies</h1>
+    <div class="row">
         {% for movie in movies %}
-        <li class="mb-3">
-            <strong>{{ movie.title }}</strong><br>
-            <img src="{{ movie.poster_url }}" alt="{{ movie.title }} Poster">
-            Directors: 
-            {% for director in movie.directors %}
-                <span>{{ director.name }}</span>{% if not loop.last %}, {% endif %}
-            {% endfor %}<br>
-            Stars: 
-            {% for star in movie.stars %}
-                <span>{{ star.name }}</span>{% if not loop.last %}, {% endif %}
-            {% endfor %}<br>
-            {% if movie.rating %}
-                Rating: 
-                <span>
-                    {{ movie.rating[0].rating|round(1, 'floor') }} ({{ movie.rating[0].votes }} votes)
-                </span>
-            {% else %}
-                Rating not available.
-            {% endif %}
-            <a href="{{ url_for('master.movie_detail', movie_id=movie.id) }}" class="modern-link">See details</a>
-        </li>
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div id="img-wrapper">
+                    <img data-src="{{ movie.poster_url }}" src="/static/placeholder.png" class="card-img-top movie-poster lazy" alt="{{ movie.title }} Poster" onerror="this.parentNode.innerHTML='<div class=\'placeholder-img-movies\'><i class=\'fas fa-film\'></i></div>';">
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ movie.title }}</h5>
+                    <p class="card-text">
+                        Directors: {{ movie.directors }}
+                        <br>
+                        Stars: {{ movie.stars }}
+                        <br>
+                        {% if movie.rating %}
+                            Rating: 
+                            <span>
+                                {{ movie.rating|round(1, 'floor') }} ({{ movie.votes }} votes)
+                            </span>
+                        {% else %}
+                            Rating not available.
+                        {% endif %}
+                    </p>
+                    <a href="{{ url_for('master.movie_detail', movie_id=movie.id) }}" class="btn btn-primary">See details</a>
+                </div>
+            </div>
+        </div>
         {% else %}
-        <li>No movies found.</li>
+        <div class="col-12">
+            <p>No movies found.</p>
+        </div>
         {% endfor %}
-    </ul>
+    </div>
+    <div class="mt-4">
+        <nav aria-label="Movie pages">
+            <ul class="pagination">
+                <li class="page-item {% if not movies.has_prev %}disabled{% endif %}">
+                    <a class="page-link" href="{{ url_for('master.display_movies', page=1) }}">First</a>
+                </li>
+                <li class="page-item {% if not movies.has_prev %}disabled{% endif %}">
+                    <a class="page-link" href="{{ url_for('master.display_movies', page=movies.prev_num) }}">Previous</a>
+                </li>
+                <li class="page-item {% if not movies.has_next %}disabled{% endif %}">
+                    <a class="page-link" href="{{ url_for('master.display_movies', page=movies.next_num) }}">Next</a>
+                </li>
+                <li class="page-item {% if not movies.has_next %}disabled{% endif %}">
+                    <a class="page-link" href="{{ url_for('master.display_movies', page=movies.pages) }}">Last</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
 </div>
-
 {% endblock %}
